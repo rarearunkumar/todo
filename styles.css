@@ -1,0 +1,239 @@
+:root {
+  --bg: #F4EFE3;
+  --paper: #FBF8F1;
+  --ink: #1B1B1B;
+  --muted: #8A857B;
+  --rule: #E8E2D2;
+  --check-border: #C9C3B3;
+  --drag: #D4CFBF;
+  --accent: #ce563b;
+  --plus-disabled: #E8E2D2;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.paper {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  body { padding: 32px 0; align-items: center; }
+  .paper {
+    max-width: 420px;
+    min-height: 0;
+    height: min(820px, calc(100vh - 64px));
+    border-radius: 36px;
+    box-shadow: 0 30px 60px rgba(27, 27, 27, 0.12);
+    overflow: hidden;
+  }
+}
+
+.head {
+  padding: 60px 28px 0;
+  flex: 0 0 auto;
+}
+
+.title {
+  font-family: "Instrument Serif", serif;
+  font-weight: 400;
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: -1.5px;
+  color: var(--ink);
+  margin: 0;
+  padding: 16px 0 0;
+}
+
+.count {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+  margin: 8px 0 22px;
+}
+
+.rule {
+  height: 1px;
+  background: var(--rule);
+}
+
+.list {
+  flex: 1;
+  overflow: auto;
+  padding: 4px 28px;
+}
+
+.active, .done {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--rule);
+  cursor: grab;
+}
+
+.row.dragging { opacity: 0.4; }
+
+.row.active-row { padding: 18px 0; }
+.row.done-row { padding: 15px 0; cursor: default; }
+
+.check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--check-border);
+  background: transparent;
+  flex-shrink: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.check.is-done {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.row.done-row .check.is-done {
+  background: var(--muted);
+  border-color: var(--muted);
+}
+
+.check svg { display: block; }
+
+.row-text {
+  flex: 1;
+  font-size: 16px;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.row.done-row .row-text {
+  font-size: 15px;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.drag {
+  flex-shrink: 0;
+  display: block;
+  color: var(--drag);
+}
+
+.done-block {
+  margin-top: 0;
+}
+
+.done-toggle {
+  margin-top: 22px;
+  padding: 10px 0;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left;
+  font-family: "Instrument Serif", serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.done-toggle .chev {
+  color: var(--ink);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.done-toggle[aria-expanded="true"] .chev {
+  transform: rotate(90deg);
+}
+
+.done-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.done-count {
+  font-family: "Instrument Serif", serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--muted);
+}
+
+.entry {
+  padding: 12px 20px 30px;
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.entry-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 0 0 4px;
+  border: none;
+  background: transparent;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+}
+
+.entry-input::placeholder { color: var(--muted); }
+
+.entry-add {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: var(--paper);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.15s ease;
+}
+
+.entry-add:disabled {
+  background: var(--plus-disabled);
+  cursor: default;
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>To-do · Editorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="paper">
+    <header class="head">
+      <h1 class="title">Today</h1>
+      <div class="count" id="count">0 things to do</div>
+      <div class="rule"></div>
+    </header>
+
+    <section class="list" id="list-region">
+      <ul class="active" id="active"></ul>
+
+      <div class="done-block" id="done-block" hidden>
+        <button class="done-toggle" id="done-toggle" type="button" aria-expanded="false">
+          <svg class="chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="done-label">Done <span class="done-count" id="done-count">0</span></span>
+        </button>
+        <ul class="done" id="done"></ul>
+      </div>
+    </section>
+
+    <form class="entry" id="entry-form" autocomplete="off">
+      <input
+        id="entry-input"
+        class="entry-input"
+        type="text"
+        placeholder="What's next?"
+        aria-label="New task"
+      />
+      <button id="entry-add" class="entry-add" type="submit" aria-label="Add task" disabled>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+      </button>
+    </form>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
