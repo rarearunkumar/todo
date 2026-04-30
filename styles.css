@@ -144,7 +144,26 @@ body {
   font-size: 16px;
   color: var(--ink);
   word-break: break-word;
+  cursor: text;
 }
+
+.row.done-row .row-text { cursor: default; }
+
+.row-edit {
+  flex: 1;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.row.editing { cursor: default; }
 
 .row.done-row .row-text {
   font-size: 15px;

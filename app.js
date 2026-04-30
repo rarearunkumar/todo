@@ -1,12 +1,14 @@
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'todo-editorial.v1';
+  var STORAGE_KEY = 'today-todo.v1';
+  var LEGACY_KEY = 'todo-editorial.v1';
 
   var state = {
     tasks: load(),
     expanded: false,
-    dragId: null
+    dragId: null,
+    editingId: null
   };
 
   var els = {
@@ -24,6 +26,14 @@
   function load() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        var legacy = localStorage.getItem(LEGACY_KEY);
+        if (legacy) {
+          localStorage.setItem(STORAGE_KEY, legacy);
+          localStorage.removeItem(LEGACY_KEY);
+          raw = legacy;
+        }
+      }
       if (!raw) return [];
       var arr = JSON.parse(raw);
       return Array.isArray(arr) ? arr : [];
@@ -54,6 +64,29 @@
     t.done = !t.done;
     t.doneAt = t.done ? Date.now() : undefined;
     save();
+    render();
+  }
+
+  function startEdit(id) {
+    state.editingId = id;
+    render();
+  }
+
+  function commitEdit(id, text) {
+    var trimmed = (text || '').trim();
+    state.editingId = null;
+    if (!trimmed) {
+      state.tasks = state.tasks.filter(function (x) { return x.id !== id; });
+    } else {
+      var t = state.tasks.find(function (x) { return x.id === id; });
+      if (t) t.text = trimmed;
+    }
+    save();
+    render();
+  }
+
+  function cancelEdit() {
+    state.editingId = null;
     render();
   }
 
@@ -105,10 +138,11 @@
 
   function makeRow(t, opts) {
     var li = document.createElement('li');
-    li.className = 'row ' + (opts.done ? 'done-row' : 'active-row');
+    var editing = !opts.done && state.editingId === t.id;
+    li.className = 'row ' + (opts.done ? 'done-row' : 'active-row') + (editing ? ' editing' : '');
     li.dataset.id = t.id;
 
-    if (!opts.done) {
+    if (!opts.done && !editing) {
       li.draggable = true;
       li.addEventListener('dragstart', function () {
         state.dragId = t.id;
@@ -137,15 +171,40 @@
       e.stopPropagation();
       toggleTask(t.id);
     });
-
-    var span = document.createElement('span');
-    span.className = 'row-text';
-    span.textContent = t.text;
-
     li.appendChild(check);
-    li.appendChild(span);
 
-    if (!opts.done) li.appendChild(dragHandleSvg());
+    if (editing) {
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'row-edit';
+      input.value = t.text;
+      input.setAttribute('aria-label', 'Edit task');
+      var committed = false;
+      function finish(commit) {
+        if (committed) return;
+        committed = true;
+        if (commit) commitEdit(t.id, input.value); else cancelEdit();
+      }
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+        else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+      });
+      input.addEventListener('blur', function () { finish(true); });
+      li.appendChild(input);
+      requestAnimationFrame(function () { input.focus(); input.select(); });
+    } else {
+      var span = document.createElement('span');
+      span.className = 'row-text';
+      span.textContent = t.text;
+      if (!opts.done) {
+        span.addEventListener('click', function (e) {
+          e.stopPropagation();
+          startEdit(t.id);
+        });
+      }
+      li.appendChild(span);
+      if (!opts.done) li.appendChild(dragHandleSvg());
+    }
 
     return li;
   }
