@@ -195,4 +195,25 @@
 
   syncAddDisabled();
   render();
+
+  // Keep the entry bar above the on-screen keyboard on mobile.
+  // visualViewport shrinks when the keyboard is open; expose its
+  // height as --kb-height so .paper can pad the bottom accordingly.
+  (function trackKeyboard() {
+    var vv = window.visualViewport;
+    if (!vv) return;
+    var root = document.documentElement;
+    function update() {
+      if (window.innerWidth >= 480) {
+        root.style.setProperty('--kb-height', '0px');
+        return;
+      }
+      var offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      root.style.setProperty('--kb-height', offset + 'px');
+    }
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    update();
+  })();
 })();
